@@ -107,7 +107,21 @@ public class AirSimulation {
     public void agent3() throws InterruptedException {
         Random R = new Random();
 
-        // to be completed ...
+        int row1 = R.nextInt(this.a.getNumberOfRows());
+        int col1 = R.nextInt(this.a.getSeatsPerRow());
+        Customer c1 = this.a.getCustomer(row1, col1);
+
+        int row2 = R.nextInt(this.a.getNumberOfRows());
+        int col2 = R.nextInt(this.a.getSeatsPerRow());
+        Customer c2 = this.a.getCustomer(row2, col2);
+
+        if (c1 != null && c2 != null && c2.getFlyerLevel() > c1.getFlyerLevel()) {
+            this.a.freeSeat(row1, col1);
+            this.a.freeSeat(row2, col2);
+
+            this.a.add(c2, row1, col1);
+            this.a.add(c1, row2, col2);
+        }
 
         this.nAgent3++;
     }
