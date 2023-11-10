@@ -115,7 +115,7 @@ public class AirSimulation {
         int col2 = R.nextInt(this.a.getSeatsPerRow());
         Customer c2 = this.a.getCustomer(row2, col2);
 
-        if (c2.getFlyerLevel() > c1.getFlyerLevel()) {
+        if (c1 != null && c2 != null && c2.getFlyerLevel() > c1.getFlyerLevel()) {
             this.a.freeSeat(row1, col1);
             this.a.freeSeat(row2, col2);
 
