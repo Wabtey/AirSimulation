@@ -1,21 +1,25 @@
 package agents;
 
 import java.util.Random;
+import java.util.concurrent.Semaphore;
+import java.util.logging.Logger;
 
 import air_simulation.Aircraft;
 import air_simulation.Customer;
 
 public class Agent3 extends Agent {
 
-    public Agent3(Aircraft a) {
-        super(a);
+    public Agent3(Aircraft a, Semaphore aircraftSemaphore) {
+        super(a, aircraftSemaphore);
     }
 
     /**
-     * Wrote by @Agent3
+     * Wrote by @Agent3 and @Me (semaphore stuff)
      */
     @Override
     public void run() {
+        long start = System.currentTimeMillis();
+
         while (!aircraft.isFlightFull()) {
             Random R = new Random();
 
@@ -28,14 +32,40 @@ public class Agent3 extends Agent {
             Customer c2 = aircraft.getCustomer(row2, col2);
 
             if (c1 != null && c2 != null && c2.getFlyerLevel() > c1.getFlyerLevel()) {
+
+                try {
+                    aircraftSemaphore.acquire();
+                } catch (InterruptedException e) {
+                    Logger.getGlobal().warning("Agent3: Semaphore Acquirement Interrupted!\n" + e);
+                    Thread.currentThread().interrupt();
+                }
+
+                /* v--------------------------- critical section ---------------------------v */
                 aircraft.freeSeat(row1, col1);
                 aircraft.freeSeat(row2, col2);
 
                 aircraft.add(c2, row1, col1);
                 aircraft.add(c1, row2, col2);
+                /* ^--------------------------- critical section ---------------------------^ */
+
+                aircraftSemaphore.release();
             }
 
             numberOfCustomerServed++;
+
+            /* ------------------------- Wait the next customer ------------------------- */
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                Logger.getGlobal().warning("Agent3 Sleep Interrupted!");
+                /* Clean up whatever needs to be handled before interrupting */
+                Thread.currentThread().interrupt();
+            }
         }
+
+        long finish = System.currentTimeMillis();
+        float timeElapsed = finish - start;
+        System.out.println("Agent3's tasks completed in " + timeElapsed / 1000 + "s");
+
     }
 }
