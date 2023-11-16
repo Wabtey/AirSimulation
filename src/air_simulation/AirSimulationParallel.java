@@ -19,23 +19,23 @@ import agents.Agent4;
 
 import java.util.ArrayList;
 
-public class AirSimulation {
-    private int nAgent1;
+public class AirSimulationParallel {
+    private Aircraft a;
+    public final int nagents = 4;
+
+    private int nAgent1Parallel;
     private Agent agent2;
     private Agent agent3;
     private Agent agent4;
-    private Aircraft a;
-
     private Semaphore aircraftSemaphore = new Semaphore(1);
-    public final int nagents = 4;
 
     /**
      * Constructor
      */
-    public AirSimulation() {
+    public AirSimulationParallel() {
         this.a = new Aircraft(); // standard model
+        this.nAgent1Parallel = 0;
         // this.agent1 = new Agent1(a); // This agent is managed directly by the Main
-        this.nAgent1 = 0;
         this.agent2 = new Agent2(a, aircraftSemaphore);
         this.agent3 = new Agent3(a, aircraftSemaphore);
         this.agent4 = new Agent4(a, aircraftSemaphore);
@@ -51,7 +51,7 @@ public class AirSimulation {
     /**
      * Wrote by @Agent1 and @Me (semaphore stuff)
      */
-    public void agent1() throws InterruptedException {
+    public void agent1Parallel() throws InterruptedException {
         boolean placed = false;
         Random R = new Random();
         ArrayList<Integer> emergRows = this.a.getEmergencyRowList();
@@ -89,25 +89,26 @@ public class AirSimulation {
 
         // updating counter
         if (placed)
-            this.nAgent1++;
+            this.nAgent1Parallel++;
     }
 
     /**
      * Resetting
      */
     public void reset() {
-        this.nAgent1 = 0;
+        this.a.reset();
+
+        this.nAgent1Parallel = 0;
         this.agent2.reset();
         this.agent3.reset();
         this.agent4.reset();
-        this.a.reset();
     }
 
     /**
      * Printing
      */
     public String toString() {
-        String print = "AirSimulation (agent1 : " + this.nAgent1 +
+        String print = "AirSimulation (agent1 : " + this.nAgent1Parallel +
                 ", agent2 : " + this.agent2.getNumberOfCustomerServed() +
                 ", agent3 : " + this.agent3.getNumberOfCustomerServed() +
                 ", agent4 : " + this.agent4.getNumberOfCustomerServed() + ")\n";
@@ -124,15 +125,15 @@ public class AirSimulation {
         long start = System.currentTimeMillis();
 
         if (args != null && args.length > 0 && args[0] != null && args[0].equals("animation")) {
-            AirSimulation s = new AirSimulation();
+            AirSimulationParallel s = new AirSimulationParallel();
             s.agent2.start();
             s.agent3.start();
             s.agent4.start();
 
             while (!s.a.isFlightFull()) {
-                s.agent1();
+                s.agent1Parallel();
 
-                // -- Execute after that agent1 finished one placement --
+                // -- Execute after that agent1Parallel finished one placement --
                 System.out.println(s + s.a.cleanString());
                 Thread.sleep(100);
             }
@@ -143,13 +144,13 @@ public class AirSimulation {
 
             System.out.println(s);
         } else {
-            AirSimulation s = new AirSimulation();
+            AirSimulationParallel s = new AirSimulationParallel();
             s.agent2.start();
             s.agent3.start();
             s.agent4.start();
 
             while (!s.a.isFlightFull()) {
-                s.agent1();
+                s.agent1Parallel();
             }
 
             s.agent2.join();
