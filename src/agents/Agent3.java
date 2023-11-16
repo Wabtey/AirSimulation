@@ -54,13 +54,13 @@ public class Agent3 extends Agent {
             numberOfCustomerServed++;
 
             /* ------------------------- Wait the next customer ------------------------- */
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                Logger.getGlobal().warning("Agent3 Sleep Interrupted!");
-                /* Clean up whatever needs to be handled before interrupting */
-                Thread.currentThread().interrupt();
-            }
+            // try {
+            // Thread.sleep(100);
+            // } catch (InterruptedException e) {
+            // Logger.getGlobal().warning("Agent3 Sleep Interrupted!");
+            // /* Clean up whatever needs to be handled before interrupting */
+            // Thread.currentThread().interrupt();
+            // }
         }
 
         long finish = System.currentTimeMillis();
