@@ -1,31 +1,33 @@
+package air_simulation;
 
-/* AirSimulation class
+import java.util.Random;
+import java.util.ArrayList;
+
+/* AirSimulation class in Sequential
  *
  * TP of SE (version 2020)
  *
  * AM
  */
+public class AirSimulationSequential {
 
-import java.util.Random;
-import java.util.ArrayList;
+    private Aircraft a;
+    public final int nagents = 4;
 
-public class AirSimulation {
     private int nAgent1;
     private int nAgent2;
     private int nAgent3;
     private int nAgent4;
-    private Aircraft a;
-    public final int nagents = 4;
 
     /**
      * Constructor
      */
-    public AirSimulation() {
+    public AirSimulationSequential() {
+        this.a = new Aircraft(); // standard model
         this.nAgent1 = 0;
         this.nAgent2 = 0;
         this.nAgent3 = 0;
         this.nAgent4 = 0;
-        this.a = new Aircraft(); // standard model
     }
 
     /**
@@ -36,7 +38,7 @@ public class AirSimulation {
     }
 
     /**
-     * Agent1
+     * Wrote by @Agent1
      */
     public void agent1() throws InterruptedException {
         boolean placed = false;
@@ -48,6 +50,7 @@ public class AirSimulation {
 
         // randomly pick a seat
         do {
+            // OPTIMIZE: Those two line might be in the critical section (?)
             int row = R.nextInt(this.a.getNumberOfRows());
             int col = R.nextInt(this.a.getSeatsPerRow());
 
@@ -139,48 +142,66 @@ public class AirSimulation {
      * Resetting
      */
     public void reset() {
+        this.a.reset();
+
         this.nAgent1 = 0;
         this.nAgent2 = 0;
         this.nAgent3 = 0;
         this.nAgent4 = 0;
-        this.a.reset();
     }
 
     /**
      * Printing
      */
     public String toString() {
-        String print = "AirSimulation (agent1 : " + this.nAgent1 + ", agent2 : " + this.nAgent2 + ", " +
-                "agent3 : " + this.nAgent3 + ", agent4 : " + this.nAgent4 + ")\n";
+        String print = "AirSimulation (agent1 : " + this.nAgent1 +
+                ", agent2 : " + this.nAgent2 +
+                ", agent3 : " + this.nAgent3 +
+                ", agent4 : " + this.nAgent4 + ")\n";
         print = print + a.toString();
         return print;
     }
 
-    /**
-     * Simulation in sequential (main)
-     */
     public static void main(String[] args) throws InterruptedException {
+        sequentialAirport(args);
+    }
+
+    /**
+     * Simulation in sequential.
+     */
+    public static void sequentialAirport(String[] args) throws InterruptedException {
         System.out.println("\n** Sequential execution **\n");
+        long start = System.currentTimeMillis();
+
         if (args != null && args.length > 0 && args[0] != null && args[0].equals("animation")) {
-            AirSimulation s = new AirSimulation();
+            AirSimulationSequential s = new AirSimulationSequential();
+
             while (!s.a.isFlightFull()) {
                 s.agent1();
                 s.agent2();
                 s.agent3();
                 s.agent4();
+
                 System.out.println(s + s.a.cleanString());
                 Thread.sleep(100);
             }
+
             System.out.println(s);
         } else {
-            AirSimulation s = new AirSimulation();
+            AirSimulationSequential s = new AirSimulationSequential();
+
             while (!s.a.isFlightFull()) {
                 s.agent1();
                 s.agent2();
                 s.agent3();
                 s.agent4();
             }
+
             System.out.println(s);
         }
+
+        long finish = System.currentTimeMillis();
+        float timeElapsed = finish - start;
+        System.out.println("All cutomers served in " + timeElapsed / 1000 + "s");
     }
 }
