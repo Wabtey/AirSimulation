@@ -27,7 +27,7 @@ public class AirSimulationParallel {
     private Agent agent2;
     private Agent agent3;
     private Agent agent4;
-    private Semaphore aircraftSemaphore = new Semaphore(1);
+    private static Semaphore aircraftSemaphore = new Semaphore(1);
 
     /**
      * Constructor
@@ -127,18 +127,31 @@ public class AirSimulationParallel {
         AirSimulationParallel s = new AirSimulationParallel();
         s.agent2.start();
         s.agent3.start();
-        // s.agent4.start();
+        s.agent4.start();
 
         if (args != null && args.length > 0 && args[0] != null && args[0].equals("animation")) {
             s.agent2.activateAnimation();
             s.agent3.activateAnimation();
-            // s.agent4.activateAnimation();
+            s.agent4.activateAnimation();
 
             while (!s.a.isFlightFull()) {
                 s.agent1Parallel();
 
                 // -- Execute after that agent1Parallel finished one placement --
+
+                try {
+                    aircraftSemaphore.acquire();
+                } catch (InterruptedException e) {
+                    Logger.getGlobal().warning("Agent3: Semaphore Acquirement Interrupted!\n" + e);
+                    Thread.currentThread().interrupt();
+                }
+
+                /* v--------------------------- critical section ---------------------------v */
+
                 System.out.println(s + s.a.cleanString());
+                /* ^--------------------------- critical section ---------------------------^ */
+
+                aircraftSemaphore.release();
                 Thread.sleep(105);
             }
         } else {
@@ -148,13 +161,13 @@ public class AirSimulationParallel {
 
         s.agent2.join();
         s.agent3.join();
-        // s.agent4.join();
+        s.agent4.join();
 
         System.out.println(s);
 
         System.out.println(s.agent2.getAgentTime());
         System.out.println(s.agent3.getAgentTime());
-        // System.out.println(s.agent4.getAgentTime());
+        System.out.println(s.agent4.getAgentTime());
 
         long finish = System.currentTimeMillis();
         float timeElapsed = finish - start;

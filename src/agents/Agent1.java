@@ -11,7 +11,7 @@ import air_simulation.Customer;
 public class Agent1 extends Agent {
 
     public Agent1(Aircraft a, Semaphore aircraftSemaphore) {
-        super(a, aircraftSemaphore);
+        super(a, aircraftSemaphore, "Agent1");
     }
 
     /**
