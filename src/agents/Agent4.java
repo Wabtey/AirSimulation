@@ -7,7 +7,7 @@ import air_simulation.Aircraft;
 public class Agent4 extends Agent {
 
     public Agent4(Aircraft a, Semaphore aircraftSemaphore) {
-        super(a, aircraftSemaphore);
+        super(a, aircraftSemaphore, "Agent4");
     }
 
     @Override

@@ -124,41 +124,37 @@ public class AirSimulationParallel {
         System.out.println("\n** Parallel execution **\n");
         long start = System.currentTimeMillis();
 
+        AirSimulationParallel s = new AirSimulationParallel();
+        s.agent2.start();
+        s.agent3.start();
+        // s.agent4.start();
+
         if (args != null && args.length > 0 && args[0] != null && args[0].equals("animation")) {
-            AirSimulationParallel s = new AirSimulationParallel();
-            s.agent2.start();
-            s.agent3.start();
-            s.agent4.start();
+            s.agent2.activateAnimation();
+            s.agent3.activateAnimation();
+            // s.agent4.activateAnimation();
 
             while (!s.a.isFlightFull()) {
                 s.agent1Parallel();
 
                 // -- Execute after that agent1Parallel finished one placement --
                 System.out.println(s + s.a.cleanString());
-                Thread.sleep(100);
+                Thread.sleep(105);
             }
-
-            s.agent2.join();
-            s.agent3.join();
-            s.agent4.join();
-
-            System.out.println(s);
         } else {
-            AirSimulationParallel s = new AirSimulationParallel();
-            s.agent2.start();
-            s.agent3.start();
-            s.agent4.start();
-
-            while (!s.a.isFlightFull()) {
+            while (!s.a.isFlightFull())
                 s.agent1Parallel();
-            }
-
-            s.agent2.join();
-            s.agent3.join();
-            s.agent4.join();
-
-            System.out.println(s);
         }
+
+        s.agent2.join();
+        s.agent3.join();
+        // s.agent4.join();
+
+        System.out.println(s);
+
+        System.out.println(s.agent2.getAgentTime());
+        System.out.println(s.agent3.getAgentTime());
+        // System.out.println(s.agent4.getAgentTime());
 
         long finish = System.currentTimeMillis();
         float timeElapsed = finish - start;

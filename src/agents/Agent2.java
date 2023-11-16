@@ -10,7 +10,7 @@ import air_simulation.Customer;
 public class Agent2 extends Agent {
 
     public Agent2(Aircraft a, Semaphore aircraftSemaphore) {
-        super(a, aircraftSemaphore);
+        super(a, aircraftSemaphore, "Agent2");
     }
 
     /**
@@ -63,18 +63,19 @@ public class Agent2 extends Agent {
                 numberOfCustomerServed++;
 
             /* ------------------------- Wait the next customer ------------------------- */
-            // try {
-            // Thread.sleep(100);
-            // } catch (InterruptedException e) {
-            // Logger.getGlobal().warning("Agent2 Sleep Interrupted!");
-            // /* Clean up whatever needs to be handled before interrupting */
-            // Thread.currentThread().interrupt();
-            // }
+            if (Boolean.TRUE.equals(animation)) {
+                try {
+                    Thread.sleep(105);
+                } catch (InterruptedException e) {
+                    Logger.getGlobal().warning("Agent2 Sleep Interrupted!");
+                    /* Clean up whatever needs to be handled before interrupting */
+                    Thread.currentThread().interrupt();
+                }
+            }
         }
 
         long finish = System.currentTimeMillis();
-        float timeElapsed = finish - start;
-        System.out.println("Agent2's tasks completed in " + timeElapsed / 1000 + "s");
+        this.timeElapsed = finish - start;
     }
 
 }
