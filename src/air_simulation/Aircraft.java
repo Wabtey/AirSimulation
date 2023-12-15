@@ -1,3 +1,4 @@
+package air_simulation;
 
 /* Aircraft class
  *
